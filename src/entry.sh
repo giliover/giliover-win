@@ -56,7 +56,10 @@ SMP_ARG=$(echo "$ARGS" | grep -oP '(?<=-smp )[^ ]+')
 DRIVE=$(echo "$ARGS" | grep -oP '(?<=-drive )[^ ]+')
 MACHINE=$(echo "$ARGS" | grep -oP '(?<=-machine )[^ ]+')
 MONITOR=$(echo "$ARGS" | grep -oP '(?<=-monitor )[^ ]+')
+NETDEV=$(echo "$ARGS" | grep -oP '(?<=-netdev )[^ ]+')
+NAME=$(echo "$ARGS" | grep -oP '(?<=-name )[^ ]+')
 DEVICES=$(echo "$ARGS" | grep -oP '(-device [^ ]+)')
+
 
 echo "CPU: $CPU_ARG"
 echo "Memory: $MEM_ARG"
@@ -65,6 +68,9 @@ echo "Devices: $DEVICES"
 echo "Drive: $DRIVE"
 echo "Monitor: $MONITOR"
 echo "Machine: $MACHINE"
+echo "Netdev: $NETDEV"
+echo "Global: $NAME"
+
 
 {
 qemu-system-x86_64 \
@@ -75,15 +81,15 @@ qemu-system-x86_64 \
     -machine $MACHINE \
     -monitor $MONITOR \
     -enable-kvm \
-    -global kvm-pit.lost_tick_policy=discard \
     -display gtk \
     -vga virtio \
     -daemonize -D /run/shm/qemu.log -pidfile /run/shm/qemu.pid \
-    -name windows,process=windows,debug-threads=on \
+    -name $NAME \
     -serial pty \
-    -netdev tap,id=hostnet0,ifname=qemu,script=no,downscript=no \
+    -netdev $NETDEV \
     -drive $DRIVE \
     -rtc base=localtime \
+    -global kvm-pit.lost_tick_policy=discard \
     -global ICH9-LPC.disable_s3=1 \
     -global ICH9-LPC.disable_s4=1 \
     -object iothread,id=io2 \
