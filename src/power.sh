@@ -41,12 +41,8 @@ boot() {
     fi
   fi
 
-  error "Timeout while waiting for QEMU to boot the machine!"
-
   local pid
   pid=$(<"$QEMU_PID")
-  { kill -15 "$pid" || true; } 2>/dev/null
-
   return 0
 }
 
