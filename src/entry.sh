@@ -82,7 +82,7 @@ qemu-system-x86_64 \
     -monitor $MONITOR \
     -enable-kvm \
     -display gtk \
-    -vga std \
+    -vga virtio \
     -daemonize -D /run/shm/qemu.log -pidfile /run/shm/qemu.pid \
     -name $NAME \
     -serial pty \

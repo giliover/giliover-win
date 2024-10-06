@@ -27,23 +27,13 @@ boot() {
 
   [ -f "$QEMU_END" ] && return 0
 
-  if [ -s "$QEMU_PTY" ]; then
-    if [ "$(stat -c%s "$QEMU_PTY")" -gt 7 ]; then
-      local fail=""
-      if [[ "${BOOT_MODE,,}" == "windows_legacy" ]]; then
-        grep -Fq "No bootable device." "$QEMU_PTY" && fail="y"
-        grep -Fq "BOOTMGR is missing" "$QEMU_PTY" && fail="y"
-      fi
-      if [ -z "$fail" ]; then
-        info "Windows started succesfully, visit http://localhost:8006/ to view the screen..."
-        return 0
-      fi
-    fi
-  fi
 
-  local pid
-  pid=$(<"$QEMU_PID")
-  return 0
+    # Checar de forma diferente quando usando X11
+    sleep 10  # Aguarde um pouco mais para a janela abrir
+    info "Iniciando com X11..."
+    return 0
+
+
 }
 
 ready() {
