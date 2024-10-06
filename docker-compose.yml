@@ -1,0 +1,21 @@
+services:
+  giliover-win:
+    image: giliover-win
+    container_name: giliover-win
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    devices:
+      - /dev/kvm
+      - /dev/dri:/dev/dri
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    environment:
+      DISPLAY: $DISPLAY
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    stop_grace_period: 2m
