@@ -46,56 +46,36 @@ if [[ "$ARGS" == *"-display vnc"* ]]; then
   ARGS="${ARGS//-display vnc=:0,websocket=5700 -vga virtio/-display gtk -vga std}"
 fi
 
-ARGS="${ARGS//-drive file=\/storage\/win7x64.iso,id=cdrom9,format=raw,cache=unsafe,readonly=on,media=cdrom,if=none/}"
-ARGS="${ARGS//-device ich9-ahci,id=ahci9,addr=0x5/}"
-ARGS="${ARGS//-device ide-cd,drive=cdrom9,bus=ahci9.0,bootindex=9/}"
+# Montar instalador
+# ARGS="${ARGS//-drive file=\/$STORAGE\/${VERSION}${PLATFORM}.iso,id=cdrom9,format=raw,cache=unsafe,readonly=on,media=cdrom,if=none/}"
+# ARGS="${ARGS//-device ich9-ahci,id=ahci9,addr=0x5/}"
+# ARGS="${ARGS//-device ide-cd,drive=cdrom9,bus=ahci9.0,bootindex=9/}"
+
+ARGS="${ARGS//-display $DISPLAY/}"
 
 CPU_ARG=$(echo "$ARGS" | grep -oP '(?<=-cpu )[^ ]+')
 MEM_ARG=$(echo "$ARGS" | grep -oP '(?<=-m )[^ ]+')
 SMP_ARG=$(echo "$ARGS" | grep -oP '(?<=-smp )[^ ]+')
-DRIVE=$(echo "$ARGS" | grep -oP '(?<=-drive )[^ ]+')
 MACHINE=$(echo "$ARGS" | grep -oP '(?<=-machine )[^ ]+')
 MONITOR=$(echo "$ARGS" | grep -oP '(?<=-monitor )[^ ]+')
 NETDEV=$(echo "$ARGS" | grep -oP '(?<=-netdev )[^ ]+')
 NAME=$(echo "$ARGS" | grep -oP '(?<=-name )[^ ]+')
 DEVICES=$(echo "$ARGS" | grep -oP '(-device [^ ]+)')
+DRIVE=$(echo "$ARGS" | grep -oP '(-drive [^ ]+)')
 
 
+echo "Name: $NAME"
 echo "CPU: $CPU_ARG"
-echo "Memory: $MEM_ARG"
 echo "SMP: $SMP_ARG"
+echo "Memory: $MEM_ARG"
 echo "Devices: $DEVICES"
 echo "Drive: $DRIVE"
 echo "Monitor: $MONITOR"
 echo "Machine: $MACHINE"
 echo "Netdev: $NETDEV"
-echo "Global: $NAME"
-
 
 {
-qemu-system-x86_64 \
-    -nodefaults \
-    -cpu $CPU_ARG \
-    -smp $SMP_ARG \
-    -m $MEM_ARG \
-    -machine $MACHINE \
-    -monitor $MONITOR \
-    -enable-kvm \
-    -display gtk \
-    -vga virtio \
-    -daemonize -D /run/shm/qemu.log -pidfile /run/shm/qemu.pid \
-    -name $NAME \
-    -serial pty \
-    -netdev $NETDEV \
-    -drive $DRIVE \
-    -rtc base=localtime \
-    -global kvm-pit.lost_tick_policy=discard \
-    -global ICH9-LPC.disable_s3=1 \
-    -global ICH9-LPC.disable_s4=1 \
-    -object iothread,id=io2 \
-    -object rng-random,id=objrng0,filename=/dev/urandom \
-    $DEVICES
-
+    qemu-system-x86_64 $ARGS -display gtk -vga virtio
 } || :
 (( rc != 0 )) && log_info "$(<"$QEMU_LOG")" && exit 15
 

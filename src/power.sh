@@ -26,14 +26,9 @@ _trap() {
 boot() {
 
   [ -f "$QEMU_END" ] && return 0
-
-
-    # Checar de forma diferente quando usando X11
-    sleep 10  # Aguarde um pouco mais para a janela abrir
-    info "Iniciando com X11..."
-    return 0
-
-
+  sleep 10
+  info "Iniciando com X11..."
+  return 0
 }
 
 ready() {
