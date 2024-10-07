@@ -19,7 +19,13 @@ RUN set -eu && \
         dos2unix \
         cabextract \
         genisoimage \
-        libxml2-utils && \
+        libxml2-utils \
+        qemu-system-gui \
+        libglib2.0-0 \
+        libgtk-3-0 \
+        libsdl2-2.0-0 \
+        libspice-server-dev \
+        x11-xserver-utils && \
     apt-get clean && \
     echo "$VERSION_ARG" > /run/version && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -33,9 +39,10 @@ ADD --chmod=664 https://github.com/qemus/virtiso-whql/releases/download/v1.9.43-
 EXPOSE 8006 3389
 VOLUME /storage
 
-ENV RAM_SIZE="4G"
-ENV CPU_CORES="2"
-ENV DISK_SIZE="64G"
-ENV VERSION="win11"
+ENV RAM_SIZE="6G"
+ENV CPU_CORES="4"
+ENV DISK_SIZE="20G"
+ENV VERSION="win10"
+
 
 ENTRYPOINT ["/usr/bin/tini", "-s", "/run/entry.sh"]
