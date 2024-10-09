@@ -24,6 +24,7 @@ RUN set -eu && \
         libglib2.0-0 \
         libgtk-3-0 \
         libsdl2-2.0-0 \
+        libasound2-plugins \
         libspice-server-dev \
         x11-xserver-utils && \
     apt-get clean && \
@@ -43,6 +44,5 @@ ENV RAM_SIZE="6G"
 ENV CPU_CORES="4"
 ENV DISK_SIZE="20G"
 ENV VERSION="win10"
-
 
 ENTRYPOINT ["/usr/bin/tini", "-s", "/run/entry.sh"]

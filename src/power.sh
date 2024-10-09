@@ -24,9 +24,7 @@ _trap() {
 }
 
 boot() {
-
   [ -f "$QEMU_END" ] && return 0
-  sleep 10
   info "Iniciando com X11..."
   return 0
 }

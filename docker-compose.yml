@@ -8,11 +8,17 @@ services:
     devices:
       - /dev/kvm
       - /dev/dri:/dev/dri
+      - /dev/snd
     cap_add:
       - NET_ADMIN
-    network_mode: host
+    stdin_open: true
+    privileged: true
+    tty: true
     environment:
-      DISPLAY: $DISPLAY
+      - DISPLAY=${DISPLAY}
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+      - /run/user/1000/pulse:/run/user/1000/pulse
+      - /dev/snd:/dev/snd
     stop_grace_period: 2m

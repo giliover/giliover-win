@@ -43,7 +43,7 @@ export NO_AT_BRIDGE=1
 set -Eeuo pipefail
 
 if [[ "$ARGS" == *"-display vnc"* ]]; then
-  ARGS="${ARGS//-display vnc=:0,websocket=5700 -vga virtio/-display gtk -vga std}"
+  ARGS="${ARGS//-display vnc=$DISPLAY,websocket=5700 -vga virtio/-display gtk -vga std}"
 fi
 
 # Montar instalador
@@ -74,8 +74,28 @@ echo "Monitor: $MONITOR"
 echo "Machine: $MACHINE"
 echo "Netdev: $NETDEV"
 
+echo 'pcm.pulse {
+    type pulse
+}
+
+ctl.pulse {
+    type pulse
+}
+
+pcm.!default {
+    type plug
+    slave.pcm "pulse"
+}
+
+ctl.!default {
+    type pulse
+}' > ~/.asoundrc
+
+
 {
-    qemu-system-x86_64 $ARGS -display gtk -vga virtio
+    qemu-system-x86_64 $ARGS -display gtk -vga virtio \
+    -audiodev alsa,id=pulse,out.frequency=44100 \
+    -device intel-hda -device hda-duplex,audiodev=pulse    
 } || :
 (( rc != 0 )) && log_info "$(<"$QEMU_LOG")" && exit 15
 
